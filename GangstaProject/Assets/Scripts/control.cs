@@ -9,9 +9,21 @@ public class control : MonoBehaviour
     [Header("GangParameters")]
     public float INITIAL_LIFE = 100f;
     public float INITIAL_MORALE = 100f;
-    private float defense;
-    private float attack;
-    public string gang;
+    private float MORALE_DECREASE = 1f;
+    private float KNIFE_ATTACK = 1f;
+    private float GUN_ATTACK = 1f;
+    public GameObject myGang;
+    public GameObject enemyGang;
+    [Header("Cards")]
+    public GameObject card1;
+    public GameObject card2;
+    public GameObject card3;
+    public GameObject card4;
+    [Header("EnemyCards")]
+    public GameObject EnemyCard1;
+    public GameObject EnemyCard2;
+    public GameObject EnemyCard3;
+    public GameObject EnemyCard4;
 
     [Header("Buffs")]
     public float activateLifeBuff;
@@ -33,13 +45,21 @@ public class control : MonoBehaviour
     private float DEFENSE_NERF = 1f;
     private float ATTACK_NERF = 1f;
 
-    [Header("Anothers")]
-    public string typeOfCard;
+    [Header("ActionCards")]
+    private int knife = 1;
+    private int gun = 2;
+    private int computer = 3;
+    private int bucks = 4;
+    private int drugs = 5;
+    private int stereo = 6;
+    private int carWithMachineGun = 7;
+    private int carWithGlasses = 8;
+    private int muscles = 9;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        //generar las typeOfCard aleatoriamente
     }
 
     // Update is called once per frame
@@ -48,20 +68,127 @@ public class control : MonoBehaviour
         
     }
 
-    public void SelectCard(string typeOfCard, string gang){
-        Animation(gang);
+    public void SelectionCard(int numberOfCard){
+        Animation(true);
+        switch (typeOfAction)
+        {
+            case 1:{
+                knifeAttack(enemyGang);
+                break;
+            }
+            case 2:{
+                gunAttack(enemyGang);
+                break;
+            }
+            case 3:{
+                computerAttack(enemyGang, new List<GameObject>() {enemyCard1, enemyCard2, enemyCard3, enemyCard4});
+                break;
+            }
+            case 4:{
+                bucksAttack(enemyGang);
+                break;
+            }
+            case 5:{
+                drugsNerf(enemyGang);
+                break;
+            }
+            case 6:{
+                stereoBuff(myGang);
+                break;
+            }
+            case 7:{
+                carWithMachineGunAttack(enemyGang);
+                break;
+            }
+            case 8:{
+                carWithGlassesWearing(myGang);
+                break;
+            }
+            case 9:{
+                musclesDefense(myGang);
+                break;
+            }
+            default:
+        }
+        //generar un nuevo y aleatorio typeOfCard para numberOfCard
     }
 
-    void Animation(string gang){
-        if(gang == "myGang"){
+    public void EnemySelectionCard(int numberOfCard){
+        Animation(false);
+        switch (typeOfAction)
+        {
+            case 1:{
+                knifeAttack(myGang);
+                break;
+            }
+            case 2:{
+                gunAttack(myGang);
+                break;
+            }
+            case 3:{
+                computerAttack(myGang, new List<GameObject>() {card1, card2, card3, card4});
+                break;
+            }
+            case 4:{
+                bucksAttack(myGang);
+                break;
+            }
+            case 5:{
+                drugsNerf(myGang);
+                break;
+            }
+            case 6:{
+                stereoBuff(enemyGang);
+                break;
+            }
+            case 7:{
+                carWithMachineGunAttack(myGang);
+                break;
+            }
+            case 8:{
+                carWithGlassesWearing(enemyGang);
+                break;
+            }
+            case 9:{
+                musclesDefense(enemyGang);
+                break;
+            }
+            default:
+        }
+    }
 
+    void Animation(bool gang){
+
+        if(gang){
+            myGang.position = new Vector3(0,1.77f,0);
         }
         else{
-
+            enemyGang.position = new Vector3(0,-1.77,0);
         }
     }
 
-    float Life(float life, bool activateLifeBuff = false, bool activateLifeNerf = false){
+    void knifeAttack(GameObject gangAttacked){
+        gangAttacked.life -= KNIFE_ATTACK*gangAttacked.morale;
+        gangAttacked.morale -= MORALE_DECREASE;
+    }
+
+    void gunAttack(GameObject gangAttacked){
+        gangAttacked.life -= GUN_ATTACK*gangAttacked.morale;
+        gangAttacked.morale -= MORALE_DECREASE;
+    }
+    
+    void computerAttack(GameObject gangAttacked, List<GameObject> cards){
+        pickRandomCard(cards).SetActive(false);
+    }
+/// QUEDÉ ACÁ DEFINIENDO ATAQUES///
+    private GameObject pickRandomCard(List<GameObject> cardList){
+        Random rnd = new Random();
+        int randIndex = rnd.Next(cards.Count);
+        GameObject randomCard = cards[randIndex];
+        return randomCard;
+    }
+
+    float LifeAlterations(float life, bool activateLifeBuff = false, bool activateLifeNerf = false){
         if (activateLifeBuff)
         {
             life = ActivateBuff(INITIAL_LIFE, life, LIFE_BUFF);
@@ -73,7 +200,7 @@ public class control : MonoBehaviour
         return life;
     }
 
-    float Morale(float morale, bool activateMoraleBuff = false, bool activateMoraleNerf = false){
+    float MoraleAlterations(float morale, bool activateMoraleBuff = false, bool activateMoraleNerf = false){
 
         if (activateMoraleBuff)
         {
