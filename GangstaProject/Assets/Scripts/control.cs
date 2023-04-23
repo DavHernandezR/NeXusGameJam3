@@ -14,6 +14,10 @@ public class control : MonoBehaviour
     private float GUN_ATTACK = 1f;
     public GameObject myGang;
     public GameObject enemyGang;
+    public GameObject life;
+    public GameObject morale;
+    public GameObject enemyLife;
+    public GameObject enemyMorale;
     [Header("Cards")]
     public GameObject card1;
     public GameObject card2;
@@ -24,26 +28,6 @@ public class control : MonoBehaviour
     public GameObject EnemyCard2;
     public GameObject EnemyCard3;
     public GameObject EnemyCard4;
-
-    [Header("Buffs")]
-    public float activateLifeBuff;
-    public float activateMoraleBuff;
-    public float activateDefenseBuff;
-    public float activateAttackBuff;
-    private float LIFE_BUFF = 1f;
-    private float MORALE_BUFF = 1f;
-    private float DEFENSE_BUFF = 1f;
-    private float ATTACK_BUFF = 1f;
-
-    [Header("Nerfs")]
-    public float activateLifeNerf;
-    public float activateMoraleNerf;
-    public float activateDefenseNerf;
-    public float activateAttackNerf;
-    private float LIFE_NERF = 1f;
-    private float MORALE_NERF = 1f;
-    private float DEFENSE_NERF = 1f;
-    private float ATTACK_NERF = 1f;
 
     [Header("ActionCards")]
     private int knife = 1;
@@ -60,6 +44,15 @@ public class control : MonoBehaviour
     void Start()
     {
         //generar las typeOfCard aleatoriamente
+        ChooseTypeOfCard(card1);
+        ChooseTypeOfCard(card2);
+        ChooseTypeOfCard(card3);
+        ChooseTypeOfCard(card4);
+        ChooseTypeOfCard(EnemyCard1);
+        ChooseTypeOfCard(EnemyCard2);
+        ChooseTypeOfCard(EnemyCard3);
+        ChooseTypeOfCard(EnemyCard4);
+
     }
 
     // Update is called once per frame
@@ -68,36 +61,41 @@ public class control : MonoBehaviour
         
     }
 
-    public void SelectionCard(int numberOfCard){
-        Animation(true);
-        switch (typeOfAction)
+    private void ChooseTypeOfCard(GameObject card){
+
+    }
+
+    public void SelectionCard(GameObject card, int typeOfAction){
+
+        StartCoroutine(GangMovement(true));
+        /*switch (typeOfAction)
         {
             case 1:{
-                knifeAttack(enemyGang);
+                knifeAttack(enemyLife, enemyMorale);
                 break;
             }
             case 2:{
-                gunAttack(enemyGang);
+                gunAttack(enemyLife, enemyMorale);
                 break;
             }
             case 3:{
-                computerAttack(enemyGang, new List<GameObject>() {enemyCard1, enemyCard2, enemyCard3, enemyCard4});
+                computerAttack(new List<GameObject>() {enemyCard1, enemyCard2, enemyCard3, enemyCard4});
                 break;
             }
             case 4:{
-                bucksAttack(enemyGang);
+                bucksAttack(enemyLife, enemyMorale);
                 break;
             }
             case 5:{
-                drugsNerf(enemyGang);
+                drugsNerf(enemyMorale);
                 break;
             }
             case 6:{
-                stereoBuff(myGang);
+                stereoBuff(morale);
                 break;
             }
             case 7:{
-                carWithMachineGunAttack(enemyGang);
+                carWithMachineGunAttack(enemyLife, enemyMorale);
                 break;
             }
             case 8:{
@@ -105,44 +103,46 @@ public class control : MonoBehaviour
                 break;
             }
             case 9:{
-                musclesDefense(myGang);
+                musclesDefense(life);
                 break;
             }
             default:
-        }
-        //generar un nuevo y aleatorio typeOfCard para numberOfCard
+            break;
+        }*/
+        ChooseTypeOfCard(card);
     }
 
-    public void EnemySelectionCard(int numberOfCard){
-        Animation(false);
-        switch (typeOfAction)
+    public void EnemySelectionCard(GameObject enemyCard, int typeOfAction){
+
+        StartCoroutine(GangMovement(false));
+        /*switch (typeOfAction)
         {
             case 1:{
-                knifeAttack(myGang);
+                knifeAttack(life, morale);
                 break;
             }
             case 2:{
-                gunAttack(myGang);
+                gunAttack(life, morale);
                 break;
             }
             case 3:{
-                computerAttack(myGang, new List<GameObject>() {card1, card2, card3, card4});
+                computerAttack(new List<GameObject>() {card1, card2, card3, card4});
                 break;
             }
             case 4:{
-                bucksAttack(myGang);
+                bucksAttack(life, morale);
                 break;
             }
             case 5:{
-                drugsNerf(myGang);
+                drugsNerf(morale);
                 break;
             }
             case 6:{
-                stereoBuff(enemyGang);
+                stereoBuff(enemyMorale);
                 break;
             }
             case 7:{
-                carWithMachineGunAttack(myGang);
+                carWithMachineGunAttack(life, morale);
                 break;
             }
             case 8:{
@@ -154,33 +154,55 @@ public class control : MonoBehaviour
                 break;
             }
             default:
-        }
+            break;
+        }*/
+        ChooseTypeOfCard(enemyCard);
     }
 
     void Animation(bool gang){
 
         if(gang){
-            myGang.position = new Vector3(0,1.77f,0);
+            myGang.transform.position = new Vector3(45f,25f,0);
         }
         else{
-            enemyGang.position = new Vector3(0,-1.77,0);
+            enemyGang.transform.position = new Vector3(55f,25f,0);
         }
     }
 
-    void knifeAttack(GameObject gangAttacked){
-        gangAttacked.life -= KNIFE_ATTACK*gangAttacked.morale;
-        gangAttacked.morale -= MORALE_DECREASE;
+    void InitialAnimation(bool gang){
+
+        if(gang){
+            myGang.transform.position = new Vector3(24.7f,25f,0);
+        }
+        else{
+            enemyGang.transform.position = new Vector3(75.3f,25f,0);
+        }
     }
 
-    void gunAttack(GameObject gangAttacked){
-        gangAttacked.life -= GUN_ATTACK*gangAttacked.morale;
-        gangAttacked.morale -= MORALE_DECREASE;
+    IEnumerator GangMovement(bool gang){
+        Animation(gang);
+        yield return new WaitForSecondsRealtime(5);
+        InitialAnimation(gang);
+    }
+
+    /*void knifeAttack(GameObject life, GameObject morale){
+        lifeValue -= KNIFE_ATTACK*morale.GetComponent<Slider>().value;
+        moraleValue -= MORALE_DECREASE;
+        life.GetComponent<Slider>().value = lifeValue;
+        morale.GetComponent<Slider>().value = moraleValue;
+    }
+
+    void gunAttack(GameObject life, GameObject morale){
+        lifeValue -= GUN_ATTACK*.GetComponent<Slider>().value;
+        moraleValue -= MORALE_DECREASE;
+        life.GetComponent<Slider>().value = lifeValue;
+        morale.GetComponent<Slider>().value = moraleValue;
     }
     
-    void computerAttack(GameObject gangAttacked, List<GameObject> cards){
+    void computerAttack(List<GameObject> cards){
         pickRandomCard(cards).SetActive(false);
     }
-/// QUEDÉ ACÁ DEFINIENDO ATAQUES///
+
     private GameObject pickRandomCard(List<GameObject> cardList){
         Random rnd = new Random();
         int randIndex = rnd.Next(cards.Count);
@@ -188,48 +210,36 @@ public class control : MonoBehaviour
         return randomCard;
     }
 
-    float LifeAlterations(float life, bool activateLifeBuff = false, bool activateLifeNerf = false){
-        if (activateLifeBuff)
-        {
-            life = ActivateBuff(INITIAL_LIFE, life, LIFE_BUFF);
-        }
-        if (activateLifeNerf)
-        {
-            life = ActivateNerf(life, LIFE_NERF);
-        }
-        return life;
+    void bucksAttack(GameObject life, GameObject morale){
+        lifeValue -= GUN_ATTACK*.GetComponent<Slider>().value;
+        moraleValue -= MORALE_DECREASE;
+        life.GetComponent<Slider>().value = lifeValue;
+        morale.GetComponent<Slider>().value = moraleValue;
     }
 
-    float MoraleAlterations(float morale, bool activateMoraleBuff = false, bool activateMoraleNerf = false){
-
-        if (activateMoraleBuff)
-        {
-            morale = ActivateBuff(INITIAL_MORALE, morale, MORALE_BUFF);
-        }
-        if (activateMoraleNerf)
-        {
-            morale = ActivateNerf(morale, MORALE_NERF);
-        }
-        return morale;
+    void drugsNerf(GameObject morale){
+        morale.GetComponent<Slider>().value -= MORALE_NERF;
     }
 
-    float ActivateBuff(float initial_parameter, float parameter, float buff){
-
-        if (parameter*(1+buff) < initial_parameter)
-        {
-            parameter = parameter*(1+buff);
-        }
-        else parameter = initial_parameter;
-        return parameter;
+    void stereoBuff(GameObject morale){
+        morale.GetComponent<Slider>().value += MORALE_BUFF;
     }
 
-    float ActivateNerf(float parameter, float nerf){
-        
-        if (parameter*(1-nerf) < 0)
-        {
-            parameter = 0;
-        }
-        else parameter = parameter*(1-nerf);
-        return parameter;
+    void carWithMachineGunAttack(GameObject life, GameObject morale){
+        float MACHINEGUN_MULTIPLICATOR = 3f;
+        carAnimation();
+        lifeValue -= MACHINEGUN_MULTIPLICATOR*GUN_ATTACK*morale.GetComponent<Slider>().value;
+        moraleValue -= MORALE_DECREASE;
+        life.GetComponent<Slider>().value = lifeValue;
+        morale.GetComponent<Slider>().value = moraleValue;
     }
+
+    void carWithGlassesWearing(GameObject gangBuffed){
+        carAnimation();
+        gangBuffed.glasses = true;
+    }
+
+    void musclesDefense(GameObject gangDefended){
+
+    }*/
 }
