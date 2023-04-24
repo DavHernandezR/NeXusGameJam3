@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.VisualScripting;
 
-public class control : MonoBehaviour
+public class Control : MonoBehaviour
 {
 
     [Header("GangParameters")]
@@ -39,19 +41,24 @@ public class control : MonoBehaviour
     private int carWithMachineGun = 7;
     private int carWithGlasses = 8;
     private int muscles = 9;
+    public int typeOfCard;
+
+    [Header("Buff/Nerf")]
+    private float MORALE_BUFF = 1f;
+    private float MORALE_NERF = 1f;
 
     // Start is called before the first frame update
     void Start()
     {
         //generar las typeOfCard aleatoriamente
-        ChooseTypeOfCard(card1);
+        /*ChooseTypeOfCard(card1);
         ChooseTypeOfCard(card2);
         ChooseTypeOfCard(card3);
         ChooseTypeOfCard(card4);
         ChooseTypeOfCard(EnemyCard1);
         ChooseTypeOfCard(EnemyCard2);
         ChooseTypeOfCard(EnemyCard3);
-        ChooseTypeOfCard(EnemyCard4);
+        ChooseTypeOfCard(EnemyCard4);*/
 
     }
 
@@ -62,13 +69,15 @@ public class control : MonoBehaviour
     }
 
     private void ChooseTypeOfCard(GameObject card){
-
+        typeOfCard = UnityEngine.Random.Range(1,9);
     }
 
-    public void SelectionCard(GameObject card, int typeOfAction){
+    public void SelectionCard(GameObject card){
+        //int typeOfAction = card.GetComponent<Variables>().GetVariable(0).IntegerValue;
+
 
         StartCoroutine(GangMovement(true));
-        /*switch (typeOfAction)
+        switch (1)
         {
             case 1:{
                 knifeAttack(enemyLife, enemyMorale);
@@ -79,7 +88,7 @@ public class control : MonoBehaviour
                 break;
             }
             case 3:{
-                computerAttack(new List<GameObject>() {enemyCard1, enemyCard2, enemyCard3, enemyCard4});
+                computerAttack(new List<GameObject>() {EnemyCard1, EnemyCard2, EnemyCard3, EnemyCard4});
                 break;
             }
             case 4:{
@@ -108,8 +117,8 @@ public class control : MonoBehaviour
             }
             default:
             break;
-        }*/
-        ChooseTypeOfCard(card);
+        }
+        //ChooseTypeOfCard(card);
     }
 
     public void EnemySelectionCard(GameObject enemyCard, int typeOfAction){
@@ -156,7 +165,7 @@ public class control : MonoBehaviour
             default:
             break;
         }*/
-        ChooseTypeOfCard(enemyCard);
+        //ChooseTypeOfCard(enemyCard);
     }
 
     void Animation(bool gang){
@@ -185,7 +194,9 @@ public class control : MonoBehaviour
         InitialAnimation(gang);
     }
 
-    /*void knifeAttack(GameObject life, GameObject morale){
+    void knifeAttack(GameObject life, GameObject morale){
+        float lifeValue = 0;
+        float moraleValue = 0;
         lifeValue -= KNIFE_ATTACK*morale.GetComponent<Slider>().value;
         moraleValue -= MORALE_DECREASE;
         life.GetComponent<Slider>().value = lifeValue;
@@ -193,7 +204,9 @@ public class control : MonoBehaviour
     }
 
     void gunAttack(GameObject life, GameObject morale){
-        lifeValue -= GUN_ATTACK*.GetComponent<Slider>().value;
+        float lifeValue = 0;
+        float moraleValue = 0;
+        lifeValue -= GUN_ATTACK*morale.GetComponent<Slider>().value;
         moraleValue -= MORALE_DECREASE;
         life.GetComponent<Slider>().value = lifeValue;
         morale.GetComponent<Slider>().value = moraleValue;
@@ -204,14 +217,15 @@ public class control : MonoBehaviour
     }
 
     private GameObject pickRandomCard(List<GameObject> cardList){
-        Random rnd = new Random();
-        int randIndex = rnd.Next(cards.Count);
-        GameObject randomCard = cards[randIndex];
+        int randIndex = UnityEngine.Random.Range(1,4);
+        GameObject randomCard = cardList[randIndex];
         return randomCard;
     }
 
     void bucksAttack(GameObject life, GameObject morale){
-        lifeValue -= GUN_ATTACK*.GetComponent<Slider>().value;
+        float lifeValue = 0;
+        float moraleValue = 0;
+        lifeValue -= GUN_ATTACK*morale.GetComponent<Slider>().value;
         moraleValue -= MORALE_DECREASE;
         life.GetComponent<Slider>().value = lifeValue;
         morale.GetComponent<Slider>().value = moraleValue;
@@ -226,6 +240,8 @@ public class control : MonoBehaviour
     }
 
     void carWithMachineGunAttack(GameObject life, GameObject morale){
+        float lifeValue = 0;
+        float moraleValue = 0;
         float MACHINEGUN_MULTIPLICATOR = 3f;
         carAnimation();
         lifeValue -= MACHINEGUN_MULTIPLICATOR*GUN_ATTACK*morale.GetComponent<Slider>().value;
@@ -236,10 +252,14 @@ public class control : MonoBehaviour
 
     void carWithGlassesWearing(GameObject gangBuffed){
         carAnimation();
-        gangBuffed.glasses = true;
+        //gangBuffed.glasses = true;
+    }
+
+    void carAnimation(){
+
     }
 
     void musclesDefense(GameObject gangDefended){
 
-    }*/
+    }
 }
