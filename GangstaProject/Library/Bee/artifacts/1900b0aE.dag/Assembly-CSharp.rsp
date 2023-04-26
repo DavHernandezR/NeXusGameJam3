@@ -368,6 +368,14 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEngine.UI.ref.dll"
 "Assets/Scripts/Control.cs"
+"Assets/Scripts/varCard1.cs"
+"Assets/Scripts/varCard2.cs"
+"Assets/Scripts/varCard3.cs"
+"Assets/Scripts/varCard4.cs"
+"Assets/Scripts/varEnemyCard1.cs"
+"Assets/Scripts/varEnemyCard2.cs"
+"Assets/Scripts/varEnemyCard3.cs"
+"Assets/Scripts/varEnemyCard4.cs"
 -langversion:9.0
 
 /deterministic

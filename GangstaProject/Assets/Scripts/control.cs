@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 public class Control : MonoBehaviour
 {
 
+    private int roundCounter;
     [Header("GangParameters")]
     public float INITIAL_LIFE = 100f;
     public float INITIAL_MORALE = 100f;
@@ -25,11 +26,19 @@ public class Control : MonoBehaviour
     public GameObject card2;
     public GameObject card3;
     public GameObject card4;
+    public varCard1 varCard1;
+    public varCard2 varCard2;
+    public varCard3 varCard3;
+    public varCard4 varCard4;
     [Header("EnemyCards")]
-    public GameObject EnemyCard1;
-    public GameObject EnemyCard2;
-    public GameObject EnemyCard3;
-    public GameObject EnemyCard4;
+    public GameObject enemyCard1;
+    public GameObject enemyCard2;
+    public GameObject enemyCard3;
+    public GameObject enemyCard4;
+    public varEnemyCard1 varEnemyCard1;
+    public varEnemyCard2 varEnemyCard2;
+    public varEnemyCard3 varEnemyCard3;
+    public varEnemyCard4 varEnemyCard4;
 
     [Header("ActionCards")]
     private int knife = 1;
@@ -47,40 +56,105 @@ public class Control : MonoBehaviour
     private float MORALE_BUFF = 1f;
     private float MORALE_NERF = 1f;
 
-    // Start is called before the first frame update
     void Start()
     {
-        //generar las typeOfCard aleatoriamente
-        /*ChooseTypeOfCard(card1);
+        life.GetComponent<Slider>().value = INITIAL_LIFE;
+        morale.GetComponent<Slider>().value = INITIAL_MORALE;
+        enemyLife.GetComponent<Slider>().value = INITIAL_LIFE;
+        enemyMorale.GetComponent<Slider>().value = INITIAL_MORALE;
+        
+        ChooseTypeOfCard(card1);
         ChooseTypeOfCard(card2);
         ChooseTypeOfCard(card3);
         ChooseTypeOfCard(card4);
-        ChooseTypeOfCard(EnemyCard1);
-        ChooseTypeOfCard(EnemyCard2);
-        ChooseTypeOfCard(EnemyCard3);
-        ChooseTypeOfCard(EnemyCard4);*/
-
+        ChooseTypeOfCard(enemyCard1);
+        ChooseTypeOfCard(enemyCard2);
+        ChooseTypeOfCard(enemyCard3);
+        ChooseTypeOfCard(enemyCard4);
     }
 
-    // Update is called once per frame
     void Update()
     {
         
     }
 
     private void ChooseTypeOfCard(GameObject card){
+        
         typeOfCard = UnityEngine.Random.Range(1,9);
+
+        if (card == card1)
+        {
+            varCard1 = FindObjectOfType<varCard1>();
+            varCard1.typeOfAction = typeOfCard;
+        }
+        else if (card == card2)
+        {
+            varCard2 = FindObjectOfType<varCard2>();
+            varCard2.typeOfAction = typeOfCard;
+        }
+        else if (card == card3)
+        {
+            varCard3 = FindObjectOfType<varCard3>();
+            varCard3.typeOfAction = typeOfCard;
+        }
+        else if (card == card4)
+        {
+            varCard4 = FindObjectOfType<varCard4>();
+            varCard4.typeOfAction = typeOfCard;
+        }
+        else if (card == enemyCard1)
+        {
+            varEnemyCard1 = FindObjectOfType<varEnemyCard1>();
+            varEnemyCard1.typeOfAction = typeOfCard;
+        }
+        else if (card == enemyCard2)
+        {
+            varEnemyCard2 = FindObjectOfType<varEnemyCard2>();
+            varEnemyCard2.typeOfAction = typeOfCard;
+        }
+        else if (card == enemyCard3)
+        {
+            varEnemyCard3 = FindObjectOfType<varEnemyCard3>();
+            varEnemyCard3.typeOfAction = typeOfCard;
+        }
+        else if (card == enemyCard4)
+        {
+            varEnemyCard4 = FindObjectOfType<varEnemyCard4>();
+            varEnemyCard4.typeOfAction = typeOfCard;
+        }
     }
 
     public void SelectionCard(GameObject card){
-        //int typeOfAction = card.GetComponent<Variables>().GetVariable(0).IntegerValue;
+        List<GameObject> enemyCards = new List<GameObject>() {enemyCard1, enemyCard2, enemyCard3, enemyCard4};
+        int randNumber = UnityEngine.Random.Range(1,4);
+        GameObject enemyCard = enemyCards[randNumber];
+        Transform attacker = card.transform.parent.GetChild(7).GetChild(0);
 
+        if (card == card1)
+        {
+            varCard1 = FindObjectOfType<varCard1>();
+            typeOfCard = varCard1.typeOfAction;
+        }
+        else if (card == card2)
+        {
+            varCard2 = FindObjectOfType<varCard2>();
+            typeOfCard = varCard2.typeOfAction;
+        }
+        else if (card == card3)
+        {
+            varCard3 = FindObjectOfType<varCard3>();
+            typeOfCard = varCard3.typeOfAction;
+        }
+        else if (card == card4)
+        {
+            varCard4 = FindObjectOfType<varCard4>();
+            typeOfCard = varCard4.typeOfAction;
+        }
 
-        StartCoroutine(GangMovement(true));
-        switch (1)
+        switch (typeOfCard)
         {
             case 1:{
-                knifeAttack(enemyLife, enemyMorale);
+                knifeAttack(true, enemyLife, enemyMorale, attacker);
                 break;
             }
             case 2:{
@@ -88,7 +162,7 @@ public class Control : MonoBehaviour
                 break;
             }
             case 3:{
-                computerAttack(new List<GameObject>() {EnemyCard1, EnemyCard2, EnemyCard3, EnemyCard4});
+                computerAttack(enemyCards);
                 break;
             }
             case 4:{
@@ -118,16 +192,39 @@ public class Control : MonoBehaviour
             default:
             break;
         }
-        //ChooseTypeOfCard(card);
+        ChooseTypeOfCard(card);
+        StartCoroutine(Wait());
+        EnemySelectionCard(enemyCard);
     }
 
-    public void EnemySelectionCard(GameObject enemyCard, int typeOfAction){
+    public void EnemySelectionCard(GameObject enemyCard){
 
-        StartCoroutine(GangMovement(false));
-        /*switch (typeOfAction)
+        if (enemyCard == enemyCard1)
+        {
+            varEnemyCard1 = FindObjectOfType<varEnemyCard1>();
+            typeOfCard = varEnemyCard1.typeOfAction;
+        }
+        else if (enemyCard == enemyCard2)
+        {
+            varEnemyCard2 = FindObjectOfType<varEnemyCard2>();
+            typeOfCard = varEnemyCard2.typeOfAction;
+        }
+        else if (enemyCard == enemyCard3)
+        {
+            varEnemyCard3 = FindObjectOfType<varEnemyCard3>();
+            typeOfCard = varEnemyCard3.typeOfAction;
+        }
+        else if (enemyCard == enemyCard4)
+        {
+            varEnemyCard4 = FindObjectOfType<varEnemyCard4>();
+            typeOfCard = varEnemyCard4.typeOfAction;
+        }
+
+        switch (typeOfCard)
         {
             case 1:{
-                knifeAttack(life, morale);
+                Transform attacker = enemyCard.transform.parent.GetChild(7).GetChild(0); 
+                knifeAttack(false, life, morale, attacker);
                 break;
             }
             case 2:{
@@ -164,49 +261,49 @@ public class Control : MonoBehaviour
             }
             default:
             break;
-        }*/
-        //ChooseTypeOfCard(enemyCard);
+        }
+        ChooseTypeOfCard(enemyCard);
     }
 
-    void Animation(bool gang){
+    void Animation(bool gang, Transform attacker, Vector3 initialPosition){
 
         if(gang){
-            myGang.transform.position = new Vector3(45f,25f,0);
+            attacker.position = new Vector2(initialPosition.x+31f,initialPosition.y);
         }
         else{
-            enemyGang.transform.position = new Vector3(55f,25f,0);
+            attacker.position = new Vector2(initialPosition.x-31f,initialPosition.y);
         }
     }
 
-    void InitialAnimation(bool gang){
-
-        if(gang){
-            myGang.transform.position = new Vector3(24.7f,25f,0);
-        }
-        else{
-            enemyGang.transform.position = new Vector3(75.3f,25f,0);
-        }
+    void InitialAnimation(Transform attacker, Vector3 initialPosition){
+            attacker.position = initialPosition;
     }
 
-    IEnumerator GangMovement(bool gang){
-        Animation(gang);
-        yield return new WaitForSecondsRealtime(5);
-        InitialAnimation(gang);
+    IEnumerator GangMovement(bool gang, Transform attacker){
+        Vector3 initialPosition = attacker.position;
+        Animation(gang, attacker, initialPosition);
+        yield return new WaitForSecondsRealtime(3);
+        InitialAnimation(attacker, initialPosition);
     }
 
-    void knifeAttack(GameObject life, GameObject morale){
-        float lifeValue = 0;
-        float moraleValue = 0;
-        lifeValue -= KNIFE_ATTACK*morale.GetComponent<Slider>().value;
+    IEnumerator Wait(){
+        yield return new WaitForSecondsRealtime(3);
+    }
+
+    void knifeAttack(bool gang, GameObject life, GameObject morale, Transform attacker){
+        StartCoroutine(GangMovement(gang, attacker));
+        float lifeValue = life.GetComponent<Slider>().value;
+        float moraleValue = morale.GetComponent<Slider>().value;
+        lifeValue -= KNIFE_ATTACK*moraleValue*0.1f;
         moraleValue -= MORALE_DECREASE;
         life.GetComponent<Slider>().value = lifeValue;
         morale.GetComponent<Slider>().value = moraleValue;
     }
 
     void gunAttack(GameObject life, GameObject morale){
-        float lifeValue = 0;
-        float moraleValue = 0;
-        lifeValue -= GUN_ATTACK*morale.GetComponent<Slider>().value;
+        float lifeValue = life.GetComponent<Slider>().value;
+        float moraleValue = morale.GetComponent<Slider>().value;
+        lifeValue -= GUN_ATTACK*moraleValue*0.1f;
         moraleValue -= MORALE_DECREASE;
         life.GetComponent<Slider>().value = lifeValue;
         morale.GetComponent<Slider>().value = moraleValue;
@@ -223,9 +320,9 @@ public class Control : MonoBehaviour
     }
 
     void bucksAttack(GameObject life, GameObject morale){
-        float lifeValue = 0;
-        float moraleValue = 0;
-        lifeValue -= GUN_ATTACK*morale.GetComponent<Slider>().value;
+        float lifeValue = life.GetComponent<Slider>().value;
+        float moraleValue = morale.GetComponent<Slider>().value;
+        lifeValue -= GUN_ATTACK*moraleValue*0.1f;
         moraleValue -= MORALE_DECREASE;
         life.GetComponent<Slider>().value = lifeValue;
         morale.GetComponent<Slider>().value = moraleValue;
@@ -240,11 +337,11 @@ public class Control : MonoBehaviour
     }
 
     void carWithMachineGunAttack(GameObject life, GameObject morale){
-        float lifeValue = 0;
-        float moraleValue = 0;
+        float lifeValue = life.GetComponent<Slider>().value;
+        float moraleValue = morale.GetComponent<Slider>().value;
         float MACHINEGUN_MULTIPLICATOR = 3f;
         carAnimation();
-        lifeValue -= MACHINEGUN_MULTIPLICATOR*GUN_ATTACK*morale.GetComponent<Slider>().value;
+        lifeValue -= MACHINEGUN_MULTIPLICATOR*GUN_ATTACK*moraleValue*0.1f;
         moraleValue -= MORALE_DECREASE;
         life.GetComponent<Slider>().value = lifeValue;
         morale.GetComponent<Slider>().value = moraleValue;
