@@ -62,6 +62,7 @@ public class Control : MonoBehaviour
         morale.GetComponent<Slider>().value = INITIAL_MORALE;
         enemyLife.GetComponent<Slider>().value = INITIAL_LIFE;
         enemyMorale.GetComponent<Slider>().value = INITIAL_MORALE;
+        roundCounter = 0;
         
         ChooseTypeOfCard(card1);
         ChooseTypeOfCard(card2);
@@ -79,7 +80,7 @@ public class Control : MonoBehaviour
     }
 
     private void ChooseTypeOfCard(GameObject card){
-        
+        roundCounter += 1;
         typeOfCard = UnityEngine.Random.Range(1,9);
 
         if (card == card1)

@@ -959,6 +959,7 @@ m_ResolvedPackages:
   versions:
     all:
     - 1.0.0
+    - 3.0.0-exp.1
     compatible:
     - 1.0.0
     verified: 1.0.0
@@ -3013,6 +3014,7 @@ m_ResolvedPackages:
     - 5.2.3
     - 5.2.4
     - 5.2.6
+    - 5.2.7
     - 6.0.0-pre.1
     - 6.0.0-pre.2
     - 6.0.1
