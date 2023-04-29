@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.VisualScripting;
+using TMPro;
 
 public class Control : MonoBehaviour
 {
 
     private int roundCounter;
+    public TMP_Text rounds;
     [Header("GangParameters")]
     public float INITIAL_LIFE = 100f;
     public float INITIAL_MORALE = 100f;
@@ -58,29 +60,33 @@ public class Control : MonoBehaviour
 
     void Start()
     {
+
         life.GetComponent<Slider>().value = INITIAL_LIFE;
         morale.GetComponent<Slider>().value = INITIAL_MORALE;
         enemyLife.GetComponent<Slider>().value = INITIAL_LIFE;
         enemyMorale.GetComponent<Slider>().value = INITIAL_MORALE;
-        roundCounter = 0;
+        roundCounter = 1;
+        BegginingMessage();
         
-        ChooseTypeOfCard(card1);
+        /*ChooseTypeOfCard(card1);
         ChooseTypeOfCard(card2);
         ChooseTypeOfCard(card3);
         ChooseTypeOfCard(card4);
         ChooseTypeOfCard(enemyCard1);
         ChooseTypeOfCard(enemyCard2);
         ChooseTypeOfCard(enemyCard3);
-        ChooseTypeOfCard(enemyCard4);
+        ChooseTypeOfCard(enemyCard4);*/
     }
 
-    void Update()
+    private void BegginingMessage()
     {
-        
+        List<string> begginingText = new List<string>() {"Gonna bangin!!!", "Lets go to gangbang!!!", "Gonna blow your head off!!!", "Let's blast 'em!!!", "Bust 'em up!!!", "What chu' doin' in ma' place?!?", "We're gonna bust y'all!!!", "Let's buck 'em down!!!"};
+        int randText = UnityEngine.Random.Range(0,7);
+        rounds.text = begginingText[randText];
     }
 
     private void ChooseTypeOfCard(GameObject card){
-        roundCounter += 1;
+
         typeOfCard = UnityEngine.Random.Range(1,9);
 
         if (card == card1)
@@ -125,11 +131,18 @@ public class Control : MonoBehaviour
         }
     }
 
+    private void ShowRound(int round){
+
+        rounds.text = "Round "+round;
+    }
+
     public void SelectionCard(GameObject card){
+
+        ShowRound(roundCounter);
+        roundCounter += 1;
         List<GameObject> enemyCards = new List<GameObject>() {enemyCard1, enemyCard2, enemyCard3, enemyCard4};
         int randNumber = UnityEngine.Random.Range(1,4);
         GameObject enemyCard = enemyCards[randNumber];
-        Transform attacker = card.transform.parent.GetChild(7).GetChild(0);
 
         if (card == card1)
         {
@@ -155,46 +168,45 @@ public class Control : MonoBehaviour
         switch (typeOfCard)
         {
             case 1:{
-                knifeAttack(true, enemyLife, enemyMorale, attacker);
+                knifeAttack(true, enemyLife, enemyMorale, card);
                 break;
             }
             case 2:{
-                gunAttack(enemyLife, enemyMorale);
+                gunAttack(true, enemyLife, enemyMorale, card);
                 break;
             }
             case 3:{
-                computerAttack(enemyCards);
+                computerAttack(true, enemyCards, card);
                 break;
             }
             case 4:{
-                bucksAttack(enemyLife, enemyMorale);
+                bucksAttack(true, enemyLife, enemyMorale, card, roundCounter);
                 break;
             }
             case 5:{
-                drugsNerf(enemyMorale);
+                drugsNerf(true, enemyMorale, card, roundCounter);
                 break;
             }
             case 6:{
-                stereoBuff(morale);
+                stereoBuff(true, morale, card);
                 break;
             }
             case 7:{
-                carWithMachineGunAttack(enemyLife, enemyMorale);
+                carWithMachineGunAttack(enemyLife, enemyMorale, card);
                 break;
             }
             case 8:{
-                carWithGlassesWearing(myGang);
+                carWithGlassesWearing(myGang, card);
                 break;
             }
             case 9:{
-                musclesDefense(life);
+                musclesDefense(life, card);
                 break;
             }
             default:
             break;
         }
-        ChooseTypeOfCard(card);
-        StartCoroutine(Wait());
+        //ChooseTypeOfCard(card);
         EnemySelectionCard(enemyCard);
     }
 
@@ -224,55 +236,54 @@ public class Control : MonoBehaviour
         switch (typeOfCard)
         {
             case 1:{
-                Transform attacker = enemyCard.transform.parent.GetChild(7).GetChild(0); 
-                knifeAttack(false, life, morale, attacker);
+                knifeAttack(false, life, morale, enemyCard);
                 break;
             }
             case 2:{
-                gunAttack(life, morale);
+                gunAttack(false, life, morale, enemyCard);
                 break;
             }
             case 3:{
-                computerAttack(new List<GameObject>() {card1, card2, card3, card4});
+                computerAttack(false, new List<GameObject>() {card1, card2, card3, card4}, enemyCard);
                 break;
             }
             case 4:{
-                bucksAttack(life, morale);
+                bucksAttack(false, life, morale, enemyCard, roundCounter);
                 break;
             }
             case 5:{
-                drugsNerf(morale);
+                drugsNerf(false, morale, enemyCard, roundCounter);
                 break;
             }
             case 6:{
-                stereoBuff(enemyMorale);
+                stereoBuff(false, enemyMorale, enemyCard);
                 break;
             }
             case 7:{
-                carWithMachineGunAttack(life, morale);
+                carWithMachineGunAttack(life, morale, enemyCard);
                 break;
             }
             case 8:{
-                carWithGlassesWearing(enemyGang);
+                carWithGlassesWearing(enemyGang, enemyCard);
                 break;
             }
             case 9:{
-                musclesDefense(enemyGang);
+                musclesDefense(enemyGang, enemyCard);
                 break;
             }
             default:
             break;
         }
-        ChooseTypeOfCard(enemyCard);
+        // ChooseTypeOfCard(enemyCard);
     }
 
     void Animation(bool gang, Transform attacker, Vector3 initialPosition){
 
         if(gang){
-            attacker.position = new Vector2(initialPosition.x+31f,initialPosition.y);
+            attacker.position = new Vector2(55f, initialPosition.y);
         }
         else{
-            attacker.position = new Vector2(initialPosition.x-31f,initialPosition.y);
+            attacker.position = new Vector2(45f, initialPosition.y);
         }
     }
 
@@ -281,66 +292,161 @@ public class Control : MonoBehaviour
     }
 
     IEnumerator GangMovement(bool gang, Transform attacker){
+
         Vector3 initialPosition = attacker.position;
+
         Animation(gang, attacker, initialPosition);
         yield return new WaitForSecondsRealtime(3);
         InitialAnimation(attacker, initialPosition);
-    }
-
-    IEnumerator Wait(){
         yield return new WaitForSecondsRealtime(3);
     }
 
-    void knifeAttack(bool gang, GameObject life, GameObject morale, Transform attacker){
-        StartCoroutine(GangMovement(gang, attacker));
+    IEnumerator GangMultiMovement(bool gang, Transform attacker, int actualCounter){
+        yield return new WaitForSecondsRealtime(3);
+        StartCoroutine(MultiMovement(gang, attacker, actualCounter));
+    }
+
+    IEnumerator MultiMovement(bool actualGang, Transform attacker, int actualCounter){
+        Vector3 initialPosition = attacker.position;
+        int roundDif = roundCounter-actualCounter;
+        Debug.Log(roundDif);
+
+        if(actualGang){
+            switch (roundDif)
+            {
+                case 0:
+                    attacker.position = new Vector2(60f, 10f);
+                    break;
+                case 1:
+                    attacker.position = new Vector2(50f, 10f);
+                    break;
+                case 2:
+                    attacker.position = new Vector2(40f, 10f);
+                    break;
+                case 3:
+                    attacker.position = new Vector2(40f, 20f);
+                    break;
+                case 4:
+                    attacker.position = new Vector2(initialPosition.x, initialPosition.y);
+                    StopCoroutine(MultiMovement(actualGang, attacker, actualCounter));
+                    yield return null;
+                    break;
+            }
+        }
+        else{
+            switch (roundDif)
+            {
+                case 0:
+                    attacker.position = new Vector2(40f, -10f);
+                    break;
+                case 1:
+                    attacker.position = new Vector2(50f, -10f);
+                    break;
+                case 2:
+                    attacker.position = new Vector2(60f, -10f);
+                    break;
+                case 3:
+                    attacker.position = new Vector2(70f, 0f);
+                    break;
+                case 4:
+                    attacker.position = new Vector2(initialPosition.x, initialPosition.y);
+                    StopCoroutine(MultiMovement(actualGang, attacker, actualCounter));
+                    yield return null;
+                    break;
+            }
+        }
+    }
+
+    IEnumerator WaitForNextRound(){
+        yield return new WaitForSecondsRealtime(3);
+    }
+
+    void knifeAttack(bool gang, GameObject life, GameObject morale, GameObject card){
+
         float lifeValue = life.GetComponent<Slider>().value;
         float moraleValue = morale.GetComponent<Slider>().value;
+        Transform attacker = card.transform.parent.GetChild(7).GetChild(0);
+
+        StartCoroutine(GangMovement(gang, attacker));
         lifeValue -= KNIFE_ATTACK*moraleValue*0.1f;
         moraleValue -= MORALE_DECREASE;
         life.GetComponent<Slider>().value = lifeValue;
         morale.GetComponent<Slider>().value = moraleValue;
+        StopCoroutine(GangMovement(gang, attacker));
+        StartCoroutine(WaitForNextRound());
+        StopCoroutine(WaitForNextRound());
     }
 
-    void gunAttack(GameObject life, GameObject morale){
+    void gunAttack(bool gang, GameObject life, GameObject morale, GameObject card){
+
         float lifeValue = life.GetComponent<Slider>().value;
         float moraleValue = morale.GetComponent<Slider>().value;
+        Transform attacker = card.transform.parent.GetChild(7).GetChild(1);
+
+        StartCoroutine(GangMovement(gang, attacker));
         lifeValue -= GUN_ATTACK*moraleValue*0.1f;
         moraleValue -= MORALE_DECREASE;
         life.GetComponent<Slider>().value = lifeValue;
         morale.GetComponent<Slider>().value = moraleValue;
     }
     
-    void computerAttack(List<GameObject> cards){
+    void computerAttack(bool gang, List<GameObject> cards, GameObject card){
+
+        Transform attacker = card.transform.parent.GetChild(7).GetChild(2);
+
+        StartCoroutine(GangMovement(gang, attacker));
         pickRandomCard(cards).SetActive(false);
     }
 
     private GameObject pickRandomCard(List<GameObject> cardList){
+
         int randIndex = UnityEngine.Random.Range(1,4);
+
         GameObject randomCard = cardList[randIndex];
         return randomCard;
     }
 
-    void bucksAttack(GameObject life, GameObject morale){
+    void bucksAttack(bool gang, GameObject life, GameObject morale, GameObject card, int actualCounter){
+
+        Transform attacker = card.transform.parent.GetChild(7).GetChild(3);
         float lifeValue = life.GetComponent<Slider>().value;
         float moraleValue = morale.GetComponent<Slider>().value;
+
+        Vector3 initialPosition = attacker.position;
+        Animation(gang, attacker, initialPosition);
+
+        StartCoroutine(GangMultiMovement(gang, attacker, actualCounter));
         lifeValue -= GUN_ATTACK*moraleValue*0.1f;
         moraleValue -= MORALE_DECREASE;
         life.GetComponent<Slider>().value = lifeValue;
         morale.GetComponent<Slider>().value = moraleValue;
     }
 
-    void drugsNerf(GameObject morale){
+    void drugsNerf(bool gang, GameObject morale, GameObject card, int actualCounter){
+
+        Transform attacker = card.transform.parent.GetChild(7).GetChild(4);
+
+        Vector3 initialPosition = attacker.position;
+        Animation(gang, attacker, initialPosition);
+
+        StartCoroutine(GangMultiMovement(gang, attacker, actualCounter));
         morale.GetComponent<Slider>().value -= MORALE_NERF;
     }
 
-    void stereoBuff(GameObject morale){
+    void stereoBuff(bool gang, GameObject morale, GameObject card){
+
+        Transform attacker = card.transform.parent.GetChild(7).GetChild(5);
+
+        StartCoroutine(GangMovement(gang, attacker));
         morale.GetComponent<Slider>().value += MORALE_BUFF;
     }
 
-    void carWithMachineGunAttack(GameObject life, GameObject morale){
+    void carWithMachineGunAttack(GameObject life, GameObject morale, GameObject card){
+
         float lifeValue = life.GetComponent<Slider>().value;
         float moraleValue = morale.GetComponent<Slider>().value;
         float MACHINEGUN_MULTIPLICATOR = 3f;
+
         carAnimation();
         lifeValue -= MACHINEGUN_MULTIPLICATOR*GUN_ATTACK*moraleValue*0.1f;
         moraleValue -= MORALE_DECREASE;
@@ -348,7 +454,7 @@ public class Control : MonoBehaviour
         morale.GetComponent<Slider>().value = moraleValue;
     }
 
-    void carWithGlassesWearing(GameObject gangBuffed){
+    void carWithGlassesWearing(GameObject gangBuffed, GameObject card){
         carAnimation();
         //gangBuffed.glasses = true;
     }
@@ -357,7 +463,7 @@ public class Control : MonoBehaviour
 
     }
 
-    void musclesDefense(GameObject gangDefended){
+    void musclesDefense(GameObject gangDefended, GameObject card){
 
     }
 }
